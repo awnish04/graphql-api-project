@@ -8,7 +8,7 @@ import {
 } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql", // API endpoint for GraphQL
+  uri: process.env.REACT_APP_API_URL, // API endpoint for GraphQL
   cache: new InMemoryCache(),
 });
 

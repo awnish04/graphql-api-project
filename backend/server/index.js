@@ -74,7 +74,6 @@ const { ApolloServer, gql } = require("apollo-server-express");
 
 require("dotenv").config();
 // Log the MongoDB URI to check if it's loaded correctly
-console.log("MongoDB URI:", process.env.MONGO_URI);
 
 // Connect to MongoDB (for storing contact form data)
 const mongoose = require("mongoose");
@@ -91,6 +90,7 @@ mongoose
     console.error("MongoDB connection error:", err);
     process.exit(1); // Exit the application if the database connection fails
   });
+console.log("MongoDB URI:", process.env.MONGO_URI);
 
 // Contact Form Schema
 const contactSchema = new mongoose.Schema({
@@ -142,10 +142,24 @@ const startServer = async () => {
   await server.start(); // Wait for Apollo Server to start
 
   const app = express();
+  const cors = require("cors");
+  const frontendURL = process.env.FRONTEND_URL;
+  const adminDashboardURL = process.env.ADMIN_DASHBOARD_URL;
+  app.use(
+    cors({
+      origin: [
+        frontendURL, // Frontend URL from .env
+        adminDashboardURL, // Admin Dashboard URL from .env
+      ],
+      credentials: true, // Allow cookies if needed
+    })
+  );
   server.applyMiddleware({ app, path: "/graphql" });
 
+  const graphQL_URL = process.env.GRAPHQL_URL;
+
   app.listen(4000, () => {
-    console.log("Server is running on http://localhost:4000/graphql");
+    console.log(`Server is running on ${graphQL_URL}`);
   });
 };
 
